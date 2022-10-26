@@ -1,0 +1,1 @@
+go test ./cmdr/read_chart_test.go -run TestReadChartJson -v 

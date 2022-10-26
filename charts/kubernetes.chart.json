@@ -1,0 +1,46 @@
+{
+  "kind": "Kubernetes Official Commander Charts",
+  "description": "commander for kubectl",
+  "charts": [
+    {
+      "usage": "kubectl get node detail statistic",
+      "cmdt": "kubectl top node -o wide",
+      "help": "empty helop page",
+      "prompt": []
+    },
+    {
+      "usage": "kubectl set current namespace",
+      "cmdt": "kubectl config set-context --current --namespace={{namespace}}",
+      "help": "A viewport for vertically scrolling content. Optionally includes standard pager keybindings and mouse wheel support. A high performance mode is available for applications which make use of the alternate screen buffer.",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        }
+      ]
+    },
+    {
+      "usage": "kubectl scale replicaset at spesific namespace",
+      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
+      "help": "scaling up or down replica set or deployment",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "kube_kind",
+          "label": "input kubernetes object (deployment/replicaset) ",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_replicas",
+          "label": "set total replicas",
+          "kind": "textinput"
+        }
+      ]
+    }
+  ]
+}
