@@ -41,6 +41,97 @@
           "kind": "textinput"
         }
       ]
+    },
+    {
+      "usage": "kubectl scale replicaset at spesific namespace 9",
+      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
+      "help": "scaling up or down replica set or deployment",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "kube_kind",
+          "label": "input kubernetes object (deployment/replicaset) ",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_replicas",
+          "label": "set total replicas",
+          "kind": "textinput"
+        }
+      ]
+    },
+
+    {
+      "usage": "kubectl scale replicaset at spesific namespace 3",
+      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
+      "help": "scaling up or down replica set or deployment",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "kube_kind",
+          "label": "input kubernetes object (deployment/replicaset) ",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_replicas",
+          "label": "set total replicas",
+          "kind": "textinput"
+        }
+      ]
+    },
+
+    {
+      "usage": "kubectl scale replicaset at spesific namespace 2",
+      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
+      "help": "scaling up or down replica set or deployment",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "kube_kind",
+          "label": "input kubernetes object (deployment/replicaset) ",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_replicas",
+          "label": "set total replicas",
+          "kind": "textinput"
+        }
+      ]
+    },
+
+    {
+      "usage": "kubectl scale replicaset at spesific namespace 1",
+      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
+      "help": "scaling up or down replica set or deployment",
+      "prompt": [
+        {
+          "tmplt": "namespace",
+          "label": "namespace ??",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "kube_kind",
+          "label": "input kubernetes object (deployment/replicaset) ",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_replicas",
+          "label": "set total replicas",
+          "kind": "textinput"
+        }
+      ]
     }
   ]
 }
