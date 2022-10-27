@@ -1,17 +1,16 @@
 {
-  "kind": "Kubernetes Official Commander Charts",
-  "description": "commander for kubectl",
+  "kind": "kubectl",
+  "description": "commander for Kubernetes kubectl",
   "charts": [
     {
       "usage": "kubectl get node detail statistic",
       "cmdt": "kubectl top node -o wide",
-      "help": "empty helop page",
       "prompt": []
     },
     {
       "usage": "kubectl set current namespace",
       "cmdt": "kubectl config set-context --current --namespace={{namespace}}",
-      "help": "A viewport for vertically scrolling content. Optionally includes standard pager keybindings and mouse wheel support. A high performance mode is available for applications which make use of the alternate screen buffer.",
+
       "prompt": [
         {
           "tmplt": "namespace",
@@ -23,7 +22,6 @@
     {
       "usage": "kubectl scale replicaset at spesific namespace",
       "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
-      "help": "scaling up or down replica set or deployment",
       "prompt": [
         {
           "tmplt": "namespace",
@@ -43,95 +41,36 @@
       ]
     },
     {
-      "usage": "kubectl scale replicaset at spesific namespace 9",
-      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
-      "help": "scaling up or down replica set or deployment",
+      "usage": "kubectl apply manifest with input file",
+      "cmdt": "kubectl apply -f {{file_path}}",
       "prompt": [
         {
-          "tmplt": "namespace",
-          "label": "namespace ??",
+          "tmplt": "file_path",
+          "label": "manifest file path",
+          "kind": "file_path_input"
+        }
+      ]
+    },
+    {
+      "usage": "kubectl run job with image",
+      "cmdt": "kubectl create deployment {{job_name}} --image={{image_name}}",
+      "prompt": [
+        {
+          "tmplt": "job_name",
+          "label": "set job name",
           "kind": "textinput"
         },
         {
-          "tmplt": "kube_kind",
-          "label": "input kubernetes object (deployment/replicaset) ",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "total_replicas",
-          "label": "set total replicas",
+          "tmplt": "image_name",
+          "label": "define image name and tag eg. nginx:latest ",
           "kind": "textinput"
         }
       ]
     },
-
     {
-      "usage": "kubectl scale replicaset at spesific namespace 3",
-      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
-      "help": "scaling up or down replica set or deployment",
-      "prompt": [
-        {
-          "tmplt": "namespace",
-          "label": "namespace ??",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "kube_kind",
-          "label": "input kubernetes object (deployment/replicaset) ",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "total_replicas",
-          "label": "set total replicas",
-          "kind": "textinput"
-        }
-      ]
-    },
-
-    {
-      "usage": "kubectl scale replicaset at spesific namespace 2",
-      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
-      "help": "scaling up or down replica set or deployment",
-      "prompt": [
-        {
-          "tmplt": "namespace",
-          "label": "namespace ??",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "kube_kind",
-          "label": "input kubernetes object (deployment/replicaset) ",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "total_replicas",
-          "label": "set total replicas",
-          "kind": "textinput"
-        }
-      ]
-    },
-
-    {
-      "usage": "kubectl scale replicaset at spesific namespace 1",
-      "cmdt": "kubectl scale --replicas={{total_replicas}} {{kube_kind}} -n {{namespace}}",
-      "help": "scaling up or down replica set or deployment",
-      "prompt": [
-        {
-          "tmplt": "namespace",
-          "label": "namespace ??",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "kube_kind",
-          "label": "input kubernetes object (deployment/replicaset) ",
-          "kind": "textinput"
-        },
-        {
-          "tmplt": "total_replicas",
-          "label": "set total replicas",
-          "kind": "textinput"
-        }
-      ]
+      "usage": "kubectl get all pod all namespace wide options",
+      "cmdt": "kubectl get all -A -o wide",
+      "prompt": []
     }
   ]
 }

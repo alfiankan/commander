@@ -19,7 +19,7 @@ type Chart struct {
 	Usage  string        `json:"usage"`
 	Cmdt   string        `json:"cmdt"`
 	Help   string        `json:"help"`
-	Prompt []interface{} `json:"prompt"`
+	Prompt []ChartPrompt `json:"prompt,omitempty"`
 }
 
 type CmdrChart struct {
@@ -63,7 +63,7 @@ func (cr *Cmdr) ListViewCharts() {
 
 	for _, chart := range cr.readCharts() {
 		for _, v := range chart.Charts {
-			chartsItems = append(chartsItems, item{title: v.Usage, desc: v.Cmdt})
+			chartsItems = append(chartsItems, item{title: v.Usage, desc: v.Cmdt, chartPrompt: v.Prompt})
 		}
 	}
 
@@ -75,7 +75,6 @@ func (cr *Cmdr) ListViewCharts() {
 	m.list.Title = "Commander Charts"
 
 	p := tea.NewProgram(m, tea.WithAltScreen())
-
 	if err := p.Start(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)

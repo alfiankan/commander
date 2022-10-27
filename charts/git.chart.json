@@ -1,0 +1,50 @@
+{
+  "kind": "alfiankanchart",
+  "description": "commander for Git",
+  "charts": [
+    {
+      "usage": "git show log and statistic",
+      "cmdt": "git log --stat",
+      "prompt": []
+    },
+    {
+      "usage": "load test apache benchmark",
+      "cmdt": "ab -n {{total_req}} -c {{total_concurrenct}} {{target_url}} ",
+
+      "prompt": [
+        {
+          "tmplt": "total_req",
+          "label": "total request",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "total_concurrent",
+          "label": "total concurrent",
+          "kind": "textinput"
+        },
+        {
+          "tmplt": "target_url",
+          "label": "url load test target",
+          "kind": "textinput"
+        }
+      ]
+    },
+    {
+      "usage": "unarchive tar file eg. .tar.gz",
+      "cmdt": "tar -xvf {file_path}",
+
+      "prompt": [
+        {
+          "tmplt": "file_path",
+          "label": "archive file path",
+          "kind": "file_path_input"
+        }
+      ]
+    },
+    {
+      "usage": "npm setup init tailwind",
+      "cmdt": "npm install -D tailwindcss && npx tailwindcss init",
+      "prompt": []
+    }
+  ]
+}

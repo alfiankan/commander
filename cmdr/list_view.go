@@ -1,18 +1,16 @@
 package cmdr
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
-func Propmter(item list.Item) {
-	fmt.Println(item)
-	time.Sleep(2 * time.Second)
+func ShowPropmter(itemL list.Item, m model) {
+	p := itemL.(item)
 
+	cmdrPrompt := NewPrompter(p.chartPrompt)
+	cmdrPrompt.Render()
 }
 
 var (
@@ -30,6 +28,7 @@ var (
 
 type item struct {
 	title, desc string
+	chartPrompt []ChartPrompt
 }
 
 func (i item) Title() string       { return i.title }
@@ -51,7 +50,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		if msg.String() == "enter" {
-			Propmter(m.list.SelectedItem())
+
+			ShowPropmter(m.list.SelectedItem(), m)
+
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:

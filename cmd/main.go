@@ -1,182 +1,227 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/alfiankan/commander/cmdr"
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
+func readCharts() (cmdCharts []cmdr.CmdrChart) {
+	entries, err := os.ReadDir("/Users/alfiankan/development/repack/commander/charts")
+	if err != nil {
+		panic(err)
+	}
+	for _, v := range entries {
+		fmt.Println(v.Name())
+		chartB, err := os.ReadFile(fmt.Sprintf("%s/%s", "/Users/alfiankan/development/repack/commander/charts", v.Name()))
+		if err != nil {
+			panic(err)
+		}
+		var cmdChart cmdr.CmdrChart
+		if err := json.Unmarshal(chartB, &cmdChart); err != nil {
+			panic(err)
+		}
+		cmdCharts = append(cmdCharts, cmdChart)
+	}
+	return
+}
+
 var (
-	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
-	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
-	cursorStyle         = focusedStyle.Copy()
+	appStyle = lipgloss.NewStyle().Padding(1, 2)
+
+	titleStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("#FFFDF5")).
+			Background(lipgloss.Color("#25A065")).
+			Padding(0, 1)
+
+	statusMessageStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#04B575"}).
+				Render
 	noStyle             = lipgloss.NewStyle()
+	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#25A065"))
+	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+	focusedButton       = focusedStyle.Copy().Render("[ Next ]")
+	blurredButton       = fmt.Sprintf("[ %s ]", blurredStyle.Render("Next"))
 	helpStyle           = blurredStyle.Copy()
 	cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
-
-	focusedButton = focusedStyle.Copy().Render("[ Submit ]")
-	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
+	cursorStyle         = focusedStyle.Copy()
 )
 
-type model struct {
-	focusIndex int
-	inputs     []textinput.Model
-	cursorMode textinput.CursorMode
+type ChartItem struct {
+	title, desc string
+	chartPrompt []cmdr.ChartPrompt
 }
 
-func initialModel() model {
-	m := model{
-		inputs: make([]textinput.Model, 3),
-	}
+func (i ChartItem) Title() string       { return i.title }
+func (i ChartItem) Description() string { return i.desc }
+func (i ChartItem) FilterValue() string { return i.title }
 
-	var t textinput.Model
-	for i := range m.inputs {
-		t = textinput.New()
-		t.CursorStyle = cursorStyle
-		t.CharLimit = 32
-
-		switch i {
-		case 0:
-			t.Placeholder = "Nickname"
-			t.Focus()
-			t.PromptStyle = focusedStyle
-			t.TextStyle = focusedStyle
-		case 1:
-			t.Placeholder = "Email"
-			t.CharLimit = 0
-			t.Width = 50
-		case 2:
-			t.Placeholder = "Password"
-			t.EchoMode = textinput.EchoPassword
-			t.EchoCharacter = '•'
-		}
-
-		m.inputs[i] = t
-	}
-
-	return m
+type MainViewModel struct {
+	list          list.Model
+	textInputs    []textinput.Model
+	wizardState   int
+	cursorMode    textinput.CursorMode
+	focusIndex    int
+	selectedChart int
 }
 
-func (m model) Init() tea.Cmd {
+func (m MainViewModel) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m MainViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "esc":
+		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
-
-		// Change cursor mode
-		case "ctrl+r":
-			m.cursorMode++
-			if m.cursorMode > textinput.CursorHide {
-				m.cursorMode = textinput.CursorBlink
-			}
-			cmds := make([]tea.Cmd, len(m.inputs))
-			for i := range m.inputs {
-				cmds[i] = m.inputs[i].SetCursorMode(m.cursorMode)
-			}
-			return m, tea.Batch(cmds...)
-
-		// Set focus to next input
-		case "tab", "shift+tab", "enter", "up", "down":
-			s := msg.String()
-
-			// Did the user press enter while the submit button was focused?
-			// If so, exit.
-			if s == "enter" && m.focusIndex == len(m.inputs) {
-				return m, tea.Quit
-			}
-
-			// Cycle indexes
-			if s == "up" || s == "shift+tab" {
-				m.focusIndex--
-			} else {
-				m.focusIndex++
-			}
-
-			if m.focusIndex > len(m.inputs) {
-				m.focusIndex = 0
-			} else if m.focusIndex < 0 {
-				m.focusIndex = len(m.inputs)
-			}
-
-			cmds := make([]tea.Cmd, len(m.inputs))
-			for i := 0; i <= len(m.inputs)-1; i++ {
-				if i == m.focusIndex {
-					// Set focused state
-					cmds[i] = m.inputs[i].Focus()
-					m.inputs[i].PromptStyle = focusedStyle
-					m.inputs[i].TextStyle = focusedStyle
-					continue
-				}
-				// Remove focused state
-				m.inputs[i].Blur()
-				m.inputs[i].PromptStyle = noStyle
-				m.inputs[i].TextStyle = noStyle
-			}
-
-			return m, tea.Batch(cmds...)
 		}
+		if msg.String() == "enter" && m.wizardState == 0 {
+
+			//ShowPropmter(m.list.SelectedItem(), m)
+			promptsChart := m.list.SelectedItem().(ChartItem)
+
+			m.textInputs = []textinput.Model{}
+
+			for _, v := range promptsChart.chartPrompt {
+				txtIn := textinput.New()
+
+				txtIn.Placeholder = v.Label
+				txtIn.PromptStyle = focusedStyle
+				txtIn.CursorStyle = cursorStyle
+				m.textInputs = append(m.textInputs, txtIn)
+			}
+			m.selectedChart = m.list.Index()
+			m.wizardState = 1
+			m.focusIndex = 0
+		}
+
+		if msg.String() == "up" || msg.String() == "down" || msg.String() == "enter" || msg.String() == "tab" {
+			if m.wizardState == 1 {
+				if m.focusIndex > len(m.textInputs) {
+					m.focusIndex = 0
+				} else if m.focusIndex < 0 {
+					m.focusIndex = len(m.textInputs)
+				}
+
+				if msg.String() == "enter" && m.focusIndex == len(m.textInputs) {
+					return m, tea.Quit
+				}
+				if msg.String() == "up" {
+					m.focusIndex--
+				} else if msg.String() == "down" {
+					m.focusIndex++
+				} else if msg.String() == "enter" && m.textInputs[m.focusIndex].Value() != "" {
+					m.focusIndex++
+				}
+
+				if msg.String() == "tab" {
+					if m.focusIndex >= 0 {
+						m.textInputs[m.focusIndex].SetValue("")
+					}
+				}
+
+				cmds := make([]tea.Cmd, len(m.textInputs))
+				for i := 0; i <= len(m.textInputs)-1; i++ {
+					if i == m.focusIndex {
+						// Set focused state
+						cmds[i] = m.textInputs[i].Focus()
+						m.textInputs[i].PromptStyle = focusedStyle
+						m.textInputs[i].TextStyle = focusedStyle
+						continue
+					}
+					// Remove focused state
+					m.textInputs[i].Blur()
+					m.textInputs[i].PromptStyle = noStyle
+					m.textInputs[i].TextStyle = noStyle
+				}
+				return m, tea.Batch(cmds...)
+			}
+		}
+
+	case tea.WindowSizeMsg:
+		h, v := appStyle.GetFrameSize()
+		m.list.SetSize(msg.Width-h, msg.Height-v)
+
+	}
+	var cmd tea.Cmd
+
+	if m.wizardState == 1 {
+		cmd = m.updateInputs(msg)
+		return m, cmd
 	}
 
-	// Handle character input and blinking
-	cmd := m.updateInputs(msg)
-
+	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
 
-func (m *model) updateInputs(msg tea.Msg) tea.Cmd {
-	cmds := make([]tea.Cmd, len(m.inputs))
+func (m *MainViewModel) updateInputs(msg tea.Msg) tea.Cmd {
+	cmds := make([]tea.Cmd, len(m.textInputs))
 
-	// Only text inputs with Focus() set will respond, so it's safe to simply
-	// update all of them here without any further logic.
-	for i := range m.inputs {
-		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
+	for i := range m.textInputs {
+		m.textInputs[i], cmds[i] = m.textInputs[i].Update(msg)
 	}
 
 	return tea.Batch(cmds...)
 }
 
-func (m model) View() string {
-	var b strings.Builder
+func (m MainViewModel) View() string {
+	if m.wizardState == 0 {
+		return appStyle.Render(m.list.View())
+	} else if m.wizardState == 1 {
+		var b strings.Builder
 
-	for i := range m.inputs {
-		b.WriteString(m.inputs[i].View())
-		if i < len(m.inputs)-1 {
-			b.WriteRune('\n')
+		for i := range m.textInputs {
+			b.WriteString(m.textInputs[i].View())
+			if i < len(m.textInputs)-1 {
+				b.WriteRune('\n')
+			}
 		}
+		button := &blurredButton
+		if m.focusIndex == len(m.textInputs) {
+			button = &focusedButton
+		}
+		fmt.Fprintf(&b, "\n\n%s\n\n", *button)
+
+		for _, v := range m.textInputs {
+			b.WriteString(helpStyle.Render(v.Value()))
+		}
+
+		b.WriteString(helpStyle.Render("cursor mode is "))
+		b.WriteString(cursorModeHelpStyle.Render(m.cursorMode.String()))
+		p := m.list.SelectedItem().(ChartItem)
+		b.WriteString(p.desc)
+		return b.String()
 	}
-
-	button := &blurredButton
-	if m.focusIndex == len(m.inputs) {
-		button = &focusedButton
-	}
-	fmt.Fprintf(&b, "\n\n%s\n\n", *button)
-
-	b.WriteString(helpStyle.Render("cursor mode is "))
-	b.WriteString(cursorModeHelpStyle.Render(m.cursorMode.String()))
-	b.WriteString(helpStyle.Render(" (ctrl+r to change style)"))
-
-	return b.String()
+	return "Not Found"
 }
 
 func main() {
-	if err := tea.NewProgram(initialModel()).Start(); err != nil {
-		fmt.Printf("could not start program: %s\n", err)
-		os.Exit(1)
+
+	var chartsItems []list.Item
+
+	for _, chart := range readCharts() {
+		for _, v := range chart.Charts {
+			chartsItems = append(chartsItems, ChartItem{title: v.Usage, desc: v.Cmdt, chartPrompt: v.Prompt})
+		}
+	}
+
+	listItem := list.New(chartsItems, list.NewDefaultDelegate(), 0, 0)
+	listItem.Styles.StatusBarFilterCount = titleStyle
+	listItem.Styles.Title = titleStyle
+	listItem.Title = "Commander charts"
+
+	textInputs := []textinput.Model{}
+
+	initialModel := MainViewModel{listItem, textInputs, 0, textinput.CursorBlink, 0, 0}
+	p := tea.NewProgram(initialModel)
+	if err := p.Start(); err != nil {
+		fmt.Println("could not start program:", err)
 	}
 }
-
-//func main() {
-// cmdr := cmdr.NewCmdr("/Users/alfiankan/development/repack/commander/charts")
-
-// cmdr.ListViewCharts()
-
-//}
