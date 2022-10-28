@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/alfiankan/commander/cmdr"
@@ -65,15 +66,28 @@ func (i ChartItem) FilterValue() string { return i.title }
 
 type MainViewModel struct {
 	list          list.Model
-	textInputs    []textinput.Model
+	textInputs    map[string]*textinput.Model
 	wizardState   int
 	cursorMode    textinput.CursorMode
 	focusIndex    int
 	selectedChart int
+	orderedKV     []string
+	finalCommand  string
 }
 
 func (m MainViewModel) Init() tea.Cmd {
 	return textinput.Blink
+}
+
+func (m MainViewModel) getKeyFromInputTexInputtIndex(idx int) string {
+	needle := 0
+	for k, _ := range m.textInputs {
+		if needle == idx {
+			return k
+		}
+		needle++
+	}
+	return ""
 }
 
 func (m MainViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -87,15 +101,17 @@ func (m MainViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			//ShowPropmter(m.list.SelectedItem(), m)
 			promptsChart := m.list.SelectedItem().(ChartItem)
 
-			m.textInputs = []textinput.Model{}
+			m.textInputs = map[string]*textinput.Model{}
 
 			for _, v := range promptsChart.chartPrompt {
 				txtIn := textinput.New()
 
 				txtIn.Placeholder = v.Label
+				txtIn.CharLimit = 0
 				txtIn.PromptStyle = focusedStyle
 				txtIn.CursorStyle = cursorStyle
-				m.textInputs = append(m.textInputs, txtIn)
+				m.textInputs[v.Tmplt] = &txtIn
+				m.orderedKV = append(m.orderedKV, v.Tmplt)
 			}
 			m.selectedChart = m.list.Index()
 			m.wizardState = 1
@@ -111,35 +127,36 @@ func (m MainViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				if msg.String() == "enter" && m.focusIndex == len(m.textInputs) {
+					fmt.Println(m.parseCommandTemplate(m.list.SelectedItem().(ChartItem).desc))
+					cmd := "/bin/bash"
+					args := []string{"-c", m.parseCommandTemplate(m.list.SelectedItem().(ChartItem).desc)}
+					c := exec.Command(cmd, args...)
+					c.Env = os.Environ()
+
+					f, _ := c.CombinedOutput()
+					fmt.Println(string(f))
+
 					return m, tea.Quit
 				}
 				if msg.String() == "up" {
 					m.focusIndex--
 				} else if msg.String() == "down" {
 					m.focusIndex++
-				} else if msg.String() == "enter" && m.textInputs[m.focusIndex].Value() != "" {
-					m.focusIndex++
-				}
-
-				if msg.String() == "tab" {
-					if m.focusIndex >= 0 {
-						m.textInputs[m.focusIndex].SetValue("")
-					}
 				}
 
 				cmds := make([]tea.Cmd, len(m.textInputs))
-				for i := 0; i <= len(m.textInputs)-1; i++ {
+				for i, v := range m.orderedKV {
 					if i == m.focusIndex {
 						// Set focused state
-						cmds[i] = m.textInputs[i].Focus()
-						m.textInputs[i].PromptStyle = focusedStyle
-						m.textInputs[i].TextStyle = focusedStyle
+						cmds[i] = m.textInputs[v].Focus()
+						m.textInputs[v].PromptStyle = focusedStyle
+						m.textInputs[v].TextStyle = focusedStyle
 						continue
 					}
 					// Remove focused state
-					m.textInputs[i].Blur()
-					m.textInputs[i].PromptStyle = noStyle
-					m.textInputs[i].TextStyle = noStyle
+					m.textInputs[v].Blur()
+					m.textInputs[v].PromptStyle = noStyle
+					m.textInputs[v].TextStyle = noStyle
 				}
 				return m, tea.Batch(cmds...)
 			}
@@ -164,42 +181,65 @@ func (m MainViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *MainViewModel) updateInputs(msg tea.Msg) tea.Cmd {
 	cmds := make([]tea.Cmd, len(m.textInputs))
 
-	for i := range m.textInputs {
-		m.textInputs[i], cmds[i] = m.textInputs[i].Update(msg)
+	needle := 0
+	for k, textInput := range m.textInputs {
+		var mdl textinput.Model
+		mdl, cmds[needle] = textInput.Update(msg)
+		m.textInputs[k] = &mdl
+		needle++
 	}
 
 	return tea.Batch(cmds...)
 }
 
 func (m MainViewModel) View() string {
-	if m.wizardState == 0 {
-		return appStyle.Render(m.list.View())
-	} else if m.wizardState == 1 {
-		var b strings.Builder
+	var b strings.Builder
 
-		for i := range m.textInputs {
-			b.WriteString(m.textInputs[i].View())
+	if m.wizardState == 0 {
+		b.WriteString(appStyle.Render(m.list.View()))
+	} else if m.wizardState == 1 {
+		p := m.list.SelectedItem().(ChartItem)
+
+		b.WriteString(titleStyle.Render("Fill flags or args for") + " -> " + p.title)
+		b.WriteString("\n\n")
+
+		m.finalCommand = m.parseCommandTemplate(p.desc)
+		b.WriteString(m.finalCommand)
+
+		b.WriteString("\n\n")
+		for i, v := range m.orderedKV {
+			b.WriteString(m.textInputs[v].View())
 			if i < len(m.textInputs)-1 {
 				b.WriteRune('\n')
 			}
 		}
+
 		button := &blurredButton
 		if m.focusIndex == len(m.textInputs) {
 			button = &focusedButton
 		}
 		fmt.Fprintf(&b, "\n\n%s\n\n", *button)
 
-		for _, v := range m.textInputs {
-			b.WriteString(helpStyle.Render(v.Value()))
-		}
-
-		b.WriteString(helpStyle.Render("cursor mode is "))
-		b.WriteString(cursorModeHelpStyle.Render(m.cursorMode.String()))
-		p := m.list.SelectedItem().(ChartItem)
-		b.WriteString(p.desc)
-		return b.String()
+		b.WriteString(helpStyle.Render("move ↑ or ↓"))
+		b.WriteString("\n")
+		b.WriteString(helpStyle.Render("ctrl + d delete current tect input"))
+		b.WriteString("\n")
+		b.WriteString(helpStyle.Render("hit enter on [ Next ] to execute command"))
 	}
-	return "Not Found"
+	return b.String()
+
+}
+
+func (m MainViewModel) parseCommandTemplate(tmplt string) string {
+
+	chart := m.list.SelectedItem().(ChartItem)
+
+	for _, v := range chart.chartPrompt {
+		if m.textInputs[v.Tmplt].Value() != "" {
+			tmplt = strings.ReplaceAll(tmplt, fmt.Sprintf("{{%s}}", v.Tmplt), m.textInputs[v.Tmplt].Value())
+		}
+	}
+	return tmplt
 }
 
 func main() {
@@ -217,9 +257,9 @@ func main() {
 	listItem.Styles.Title = titleStyle
 	listItem.Title = "Commander charts"
 
-	textInputs := []textinput.Model{}
+	textInputs := map[string]*textinput.Model{}
 
-	initialModel := MainViewModel{listItem, textInputs, 0, textinput.CursorBlink, 0, 0}
+	initialModel := MainViewModel{listItem, textInputs, 0, textinput.CursorBlink, 0, 0, []string{}, ""}
 	p := tea.NewProgram(initialModel)
 	if err := p.Start(); err != nil {
 		fmt.Println("could not start program:", err)

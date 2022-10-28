@@ -8,8 +8,24 @@
       "prompt": []
     },
     {
+      "usage": "test stream",
+      "cmdt": "ping -c 20 8.8.8.8",
+      "prompt": []
+    },
+    {
+      "usage": "print env var",
+      "cmdt": "echo ${{env_name}}",
+      "prompt": [
+        {
+          "tmplt": "env_name",
+          "label": "ENV Namen",
+          "kind": "textinput"
+        }
+      ]
+    },
+    {
       "usage": "load test apache benchmark",
-      "cmdt": "ab -n {{total_req}} -c {{total_concurrenct}} {{target_url}} ",
+      "cmdt": "ab -n {{total_req}} -c {{total_concurrent}} {{target_url}} ",
 
       "prompt": [
         {

@@ -51,7 +51,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if msg.String() == "enter" {
 
-			ShowPropmter(m.list.SelectedItem(), m)
+			//ShowPropmter(m.list.SelectedItem(), m)
 
 			return m, tea.Quit
 		}
