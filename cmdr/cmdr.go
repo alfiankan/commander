@@ -96,7 +96,7 @@ func (m CmdrTuiViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			for _, v := range promptsChart.chartPrompt {
 				txtIn := textinput.New()
 
-				txtIn.Placeholder = v.Label
+				txtIn.Placeholder = fmt.Sprintf("%s default:(%s)", v.Label, v.DefaultValue)
 				txtIn.CharLimit = 0
 				txtIn.PromptStyle = focusedStyle
 				txtIn.CursorStyle = cursorStyle
@@ -109,7 +109,7 @@ func (m CmdrTuiViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.focusIndex = 0
 		}
 
-		if msg.String() == "up" || msg.String() == "down" || msg.String() == "enter" || msg.String() == "tab" {
+		if msg.String() == "up" || msg.String() == "down" || msg.String() == "enter" || msg.String() == "tab" || msg.String() == "ctrl+d" {
 			if m.wizardState == 1 {
 				if m.focusIndex > len(m.textInputs) {
 					m.focusIndex = 0
@@ -132,6 +132,10 @@ func (m CmdrTuiViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.focusIndex--
 				} else if msg.String() == "down" {
 					m.focusIndex++
+				}
+
+				if msg.String() == "ctrl+d" {
+					m.textInputs[m.getKeyFromInputTexByInputIndex(m.focusIndex)].SetValue("")
 				}
 
 				cmds := make([]tea.Cmd, len(m.textInputs))
@@ -210,7 +214,7 @@ func (m CmdrTuiViewModel) View() string {
 
 		b.WriteString(helpStyle.Render("move ↑ or ↓"))
 		b.WriteString("\n")
-		b.WriteString(helpStyle.Render("ctrl + d delete current tect input"))
+		b.WriteString(helpStyle.Render("ctrl + d delete current prompt input"))
 		b.WriteString("\n")
 		b.WriteString(helpStyle.Render("hit enter on [ Next ] to execute command"))
 	} else if m.wizardState == 2 {
