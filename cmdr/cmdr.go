@@ -1,51 +1,59 @@
 package cmdr
 
 import (
-	"github.com/charmbracelet/bubbles/list"
-	tea "github.com/charmbracelet/bubbletea"
-
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
+
+	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
-type ChartPrompt struct {
-	Tmplt string `json:"tmplt"`
-	Label string `json:"label"`
-	Kind  string `json:"kind"`
+type CmdrTuiViewModel struct {
+	list          list.Model
+	textInputs    map[string]*textinput.Model
+	wizardState   int
+	cursorMode    textinput.CursorMode
+	focusIndex    int
+	selectedChart int
+	orderedKV     []string
+	finalCommand  string
+	unixshell     string
 }
 
-type Chart struct {
-	Usage  string        `json:"usage"`
-	Cmdt   string        `json:"cmdt"`
-	Help   string        `json:"help"`
-	Prompt []ChartPrompt `json:"prompt,omitempty"`
-}
+func NewCmdrTUI(chartsFilePath, unixshell string) CmdrTuiViewModel {
+	var chartsItems []list.Item
 
-type CmdrChart struct {
-	Kind        string  `json:"kind"`
-	Description string  `json:"description"`
-	Charts      []Chart `json:"charts"`
-}
-
-type Cmdr struct {
-	dotFilePath string
-}
-
-func NewCmdr(path string) Cmdr {
-	return Cmdr{
-		dotFilePath: path,
+	for _, chart := range readCharts(chartsFilePath) {
+		for _, v := range chart.Charts {
+			if v.Type == "snippet" {
+				chartsItems = append(chartsItems, ChartItem{title: v.Usage, desc: "(Snippet)", chartPrompt: v.Prompt, tmplt: v.Cmdt})
+			} else if v.Type == "cmd" {
+				chartsItems = append(chartsItems, ChartItem{title: v.Usage, desc: fmt.Sprintf("(Command) %s", v.Cmdt), chartPrompt: v.Prompt, tmplt: v.Cmdt})
+			}
+		}
 	}
+
+	listItem := list.New(chartsItems, list.NewDefaultDelegate(), 0, 0)
+	listItem.Styles.StatusBarFilterCount = titleStyle
+	listItem.Styles.Title = titleStyle
+	listItem.Title = "Commander charts v0.1.0"
+
+	textInputs := map[string]*textinput.Model{}
+	return CmdrTuiViewModel{listItem, textInputs, 0, textinput.CursorBlink, 0, 0, []string{}, "", unixshell}
 }
 
-func (cr *Cmdr) readCharts() (cmdCharts []CmdrChart) {
-	entries, err := os.ReadDir(cr.dotFilePath)
+func readCharts(chartsFilesPath string) (cmdCharts []CmdrChart) {
+	entries, err := os.ReadDir(chartsFilesPath)
 	if err != nil {
 		panic(err)
 	}
 	for _, v := range entries {
 		fmt.Println(v.Name())
-		chartB, err := os.ReadFile(fmt.Sprintf("%s/%s", cr.dotFilePath, v.Name()))
+		chartB, err := os.ReadFile(fmt.Sprintf("%s/%s", chartsFilesPath, v.Name()))
 		if err != nil {
 			panic(err)
 		}
@@ -58,26 +66,170 @@ func (cr *Cmdr) readCharts() (cmdCharts []CmdrChart) {
 	return
 }
 
-func (cr *Cmdr) ListViewCharts() {
-	var chartsItems []list.Item
+func (m CmdrTuiViewModel) Init() tea.Cmd {
+	return textinput.Blink
+}
 
-	for _, chart := range cr.readCharts() {
-		for _, v := range chart.Charts {
-			chartsItems = append(chartsItems, item{title: v.Usage, desc: v.Cmdt, chartPrompt: v.Prompt})
+func (m CmdrTuiViewModel) getKeyFromInputTexByInputIndex(idx int) string {
+	needle := 0
+	for k := range m.textInputs {
+		if needle == idx {
+			return k
+		}
+		needle++
+	}
+	return ""
+}
+
+func (m CmdrTuiViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.String() == "ctrl+c" {
+			return m, tea.Quit
+		}
+		if msg.String() == "enter" && m.wizardState == 0 {
+
+			promptsChart := m.list.SelectedItem().(ChartItem)
+
+			m.textInputs = map[string]*textinput.Model{}
+
+			for _, v := range promptsChart.chartPrompt {
+				txtIn := textinput.New()
+
+				txtIn.Placeholder = v.Label
+				txtIn.CharLimit = 0
+				txtIn.PromptStyle = focusedStyle
+				txtIn.CursorStyle = cursorStyle
+
+				m.textInputs[v.Tmplt] = &txtIn
+				m.orderedKV = append(m.orderedKV, v.Tmplt)
+			}
+			m.selectedChart = m.list.Index()
+			m.wizardState = 1
+			m.focusIndex = 0
+		}
+
+		if msg.String() == "up" || msg.String() == "down" || msg.String() == "enter" || msg.String() == "tab" {
+			if m.wizardState == 1 {
+				if m.focusIndex > len(m.textInputs) {
+					m.focusIndex = 0
+				} else if m.focusIndex < 0 {
+					m.focusIndex = len(m.textInputs)
+				}
+
+				if msg.String() == "enter" && m.focusIndex == len(m.textInputs) {
+					fmt.Println("Please wait...", m.parseCommandTemplate(m.list.SelectedItem().(ChartItem).desc))
+					m.wizardState = 2
+
+					return m, tea.ExecProcess(exec.Command(m.unixshell, "-c", m.parseCommandTemplate(m.list.SelectedItem().(ChartItem).tmplt)), func(err error) tea.Msg {
+						if err != nil {
+							fmt.Println("Error", err.Error())
+						}
+						return CmdrFinished{err}
+					})
+				}
+				if msg.String() == "up" {
+					m.focusIndex--
+				} else if msg.String() == "down" {
+					m.focusIndex++
+				}
+
+				cmds := make([]tea.Cmd, len(m.textInputs))
+				for i, v := range m.orderedKV {
+					if i == m.focusIndex {
+						cmds[i] = m.textInputs[v].Focus()
+						m.textInputs[v].PromptStyle = focusedStyle
+						m.textInputs[v].TextStyle = focusedStyle
+						continue
+					}
+					m.textInputs[v].Blur()
+					m.textInputs[v].PromptStyle = noStyle
+					m.textInputs[v].TextStyle = noStyle
+				}
+				return m, tea.Batch(cmds...)
+			}
+		}
+
+	case tea.WindowSizeMsg:
+		h, v := appStyle.GetFrameSize()
+		m.list.SetSize(msg.Width-h, msg.Height-v)
+
+	}
+	var cmd tea.Cmd
+
+	if m.wizardState == 1 {
+		cmd = m.updateInputs(msg)
+		return m, cmd
+	}
+
+	m.list, cmd = m.list.Update(msg)
+	return m, cmd
+}
+
+func (m *CmdrTuiViewModel) updateInputs(msg tea.Msg) tea.Cmd {
+	cmds := make([]tea.Cmd, len(m.textInputs))
+
+	needle := 0
+	for k, textInput := range m.textInputs {
+		var mdl textinput.Model
+		mdl, cmds[needle] = textInput.Update(msg)
+		m.textInputs[k] = &mdl
+		needle++
+	}
+
+	return tea.Batch(cmds...)
+}
+
+func (m CmdrTuiViewModel) View() string {
+	var b strings.Builder
+
+	if m.wizardState == 0 {
+		b.WriteString(appStyle.Render(m.list.View()))
+	} else if m.wizardState == 1 {
+		p := m.list.SelectedItem().(ChartItem)
+
+		b.WriteString(titleStyle.Render("Commander") + " -> " + p.title)
+		b.WriteString("\n\n")
+
+		m.finalCommand = m.parseCommandTemplate(p.desc)
+		b.WriteString(m.finalCommand)
+
+		b.WriteString("\n\n")
+		for i, v := range m.orderedKV {
+			b.WriteString(m.textInputs[v].View())
+			if i < len(m.textInputs)-1 {
+				b.WriteRune('\n')
+			}
+		}
+
+		button := &blurredButton
+		if m.focusIndex == len(m.textInputs) {
+			button = &focusedButton
+		}
+		fmt.Fprintf(&b, "\n\n%s\n\n", *button)
+
+		b.WriteString(helpStyle.Render("move ↑ or ↓"))
+		b.WriteString("\n")
+		b.WriteString(helpStyle.Render("ctrl + d delete current tect input"))
+		b.WriteString("\n")
+		b.WriteString(helpStyle.Render("hit enter on [ Next ] to execute command"))
+	} else if m.wizardState == 2 {
+		b.WriteString(titleStyle.Render("Execution completed ctrl+c to exit"))
+	}
+	return b.String()
+
+}
+
+func (m CmdrTuiViewModel) parseCommandTemplate(tmplt string) string {
+
+	chart := m.list.SelectedItem().(ChartItem)
+
+	for _, v := range chart.chartPrompt {
+		if m.textInputs[v.Tmplt].Value() != "" {
+			tmplt = strings.ReplaceAll(tmplt, fmt.Sprintf("{{%s}}", v.Tmplt), m.textInputs[v.Tmplt].Value())
+		} else {
+			tmplt = strings.ReplaceAll(tmplt, fmt.Sprintf("{{%s}}", v.Tmplt), v.DefaultValue)
 		}
 	}
-
-	listItem := list.New(chartsItems, list.NewDefaultDelegate(), 0, 0)
-	listItem.Styles.StatusBarFilterCount = titleStyle
-	listItem.Styles.Title = titleStyle
-
-	m := model{list: listItem}
-	m.list.Title = "Commander Charts"
-
-	p := tea.NewProgram(m, tea.WithAltScreen())
-	if err := p.Start(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
-	}
-
+	return tmplt
 }

@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm
+kind: Secret
+metadata:
+  name: [48;2;36;160;101m [0m[38;2;255;253;245;48;2;36;160;101mfbpass[0m[48;2;36;160;101m [0m
+  namespace: [48;2;36;160;101m [0m[38;2;255;253;245;48;2;36;160;101mdefault[0m[48;2;36;160;101m [0m
+type: Opaque

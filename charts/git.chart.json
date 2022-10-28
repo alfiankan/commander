@@ -5,62 +5,107 @@
     {
       "usage": "git show log and statistic",
       "cmdt": "git log --stat",
+      "type": "cmd",
       "prompt": []
     },
     {
       "usage": "test stream",
-      "cmdt": "ping -c 20 8.8.8.8",
-      "prompt": []
-    },
-    {
-      "usage": "print env var",
-      "cmdt": "echo ${{env_name}}",
+      "cmdt": "ping 8.8.8.8",
+      "type": "cmd",
       "prompt": [
         {
           "tmplt": "env_name",
           "label": "ENV Namen",
-          "kind": "textinput"
+          "default": ""
+        }
+      ]
+    },
+    {
+      "usage": "print env var",
+      "cmdt": "echo ${{env_name}}",
+      "type": "cmd",
+      "prompt": [
+        {
+          "tmplt": "env_name",
+          "label": "ENV Namen",
+          "default": "HOME"
         }
       ]
     },
     {
       "usage": "load test apache benchmark",
       "cmdt": "ab -n {{total_req}} -c {{total_concurrent}} {{target_url}} ",
-
+      "type": "cmd",
       "prompt": [
         {
           "tmplt": "total_req",
           "label": "total request",
-          "kind": "textinput"
+          "default": "10"
         },
         {
           "tmplt": "total_concurrent",
           "label": "total concurrent",
-          "kind": "textinput"
+          "default": "2"
         },
         {
           "tmplt": "target_url",
           "label": "url load test target",
-          "kind": "textinput"
+          "default": "https://github.com/"
         }
       ]
     },
     {
       "usage": "unarchive tar file eg. .tar.gz",
-      "cmdt": "tar -xvf {file_path}",
-
+      "cmdt": "tar -xvf {{file_path}}",
+      "type": "cmd",
       "prompt": [
         {
           "tmplt": "file_path",
           "label": "archive file path",
-          "kind": "file_path_input"
+          "default": "mypath.tar.gz"
         }
       ]
     },
     {
-      "usage": "npm setup init tailwind",
-      "cmdt": "npm install -D tailwindcss && npx tailwindcss init",
-      "prompt": []
+      "usage": "create kubernetes secret",
+      "type": "snippet",
+      "cmdt": "echo 'apiVersion: v1\ndata:\n  username: YWRtaW4=\n  password: MWYyZDFlMmU2N2Rm\nkind: Secret\nmetadata:\n  name: {{secret_name}}\n  namespace: {{namespace}}\ntype: Opaque'  > {{secret_name}}_secret.yaml && vim {{secret_name}}_secret.yaml",
+      "prompt": [
+        {
+          "tmplt": "secret_name",
+          "label": "secret name",
+          "default": "mysecret"
+        },
+        {
+          "tmplt": "namespace",
+          "label": "namespace",
+          "default": "default"
+        }
+      ]
+    },
+    {
+      "usage": "docker compose elastic search",
+      "cmdt": "curl -sSL https://raw.githubusercontent.com/bitnami/containers/main/bitnami/elasticsearch/docker-compose.yml > {{compose_file_name}}.yml",
+      "type": "snippet",
+      "prompt": [
+        {
+          "tmplt": "compose_file_name",
+          "label": "docker compose file name",
+          "default": "docker-compose"
+        }
+      ]
+    },
+    {
+      "usage": "docker compose redis cluster",
+      "cmdt": "curl -sSL https://raw.githubusercontent.com/bitnami/containers/main/bitnami/redis-cluster/docker-compose.yml > {{compose_file_name}}.yml",
+      "type": "snippet",
+      "prompt": [
+        {
+          "tmplt": "compose_file_name",
+          "label": "docker compose file name",
+          "default": "docker-compose"
+        }
+      ]
     }
   ]
 }
