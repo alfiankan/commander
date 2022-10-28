@@ -30,9 +30,9 @@ func NewCmdrTUI(chartsFilePath, unixshell string) CmdrTuiViewModel {
 	for _, chart := range readCharts(chartsFilePath) {
 		for _, v := range chart.Charts {
 			if v.Type == "snippet" {
-				chartsItems = append(chartsItems, ChartItem{title: v.Usage, desc: "(Snippet)", chartPrompt: v.Prompt, tmplt: v.Cmdt})
+				chartsItems = append(chartsItems, ChartItem{title: fmt.Sprintf("(%s) %s", chart.Kind, v.Usage), desc: "(Snippet)", chartPrompt: v.Prompt, tmplt: v.Cmdt})
 			} else if v.Type == "cmd" {
-				chartsItems = append(chartsItems, ChartItem{title: v.Usage, desc: fmt.Sprintf("(Command) %s", v.Cmdt), chartPrompt: v.Prompt, tmplt: v.Cmdt})
+				chartsItems = append(chartsItems, ChartItem{title: fmt.Sprintf("(%s) %s", chart.Kind, v.Usage), desc: fmt.Sprintf("(Command) %s", v.Cmdt), chartPrompt: v.Prompt, tmplt: v.Cmdt})
 			}
 		}
 	}
