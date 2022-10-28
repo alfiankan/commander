@@ -11,44 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	chartRepoHost = "http://localhost:1313/commander-charts/charts"
-	chartTemplate = `{
-  "kind": "mychart",
-  "description": "my personal chart",
-  "charts": [
-    {
-      "usage": "git show log and statistic",
-      "cmdt": "git log --stat",
-      "type": "cmd",
-      "prompt": []
-    },
-      {
-      "usage": "load test apache benchmark",
-      "cmdt": "ab -n {{total_req}} -c {{total_concurrent}} {{target_url}} ",
-      "type": "cmd",
-      "prompt": [
-        {
-          "tmplt": "total_req",
-          "label": "total request",
-          "default": "10"
-        },
-        {
-          "tmplt": "total_concurrent",
-          "label": "total concurrent",
-          "default": "2"
-        },
-        {
-          "tmplt": "target_url",
-          "label": "url load test target",
-          "default": "https://github.com/"
-        }
-      ]
-    }
-	]
-}`
-)
-
 func runCommanderTUI(shellPath string) {
 
 	homePath := os.Getenv("HOME")
@@ -60,11 +22,6 @@ func runCommanderTUI(shellPath string) {
 		fmt.Println("could not start program:", err)
 	}
 }
-
-const (
-	greenTemplate = "\033[1;32m%s\033[0m"
-	redTemplate   = "\033[1;31m%s\033[0m"
-)
 
 func main() {
 	homePath := os.Getenv("HOME")
@@ -78,7 +35,7 @@ func main() {
 	rootCmd := &cobra.Command{
 		Use:   "cmdr",
 		Short: "Commander TUI v0.1.0",
-		Long:  `Commander TUI, create, run, share commands and snippets with ease`,
+		Long:  `Commander TUI, create, run, share, prompt commands and snippets with ease`,
 		Run: func(cmd *cobra.Command, args []string) {
 
 			shellPath, errFlag := cmd.Flags().GetString("shell")
@@ -94,7 +51,7 @@ func main() {
 	chartsCmd := &cobra.Command{
 		Use:     "get",
 		Short:   "get charts online",
-		Long:    fmt.Sprintf("get and download charts from %s", chartRepoHost),
+		Long:    fmt.Sprintf("get and download charts from %s", cmdr.ChartRepoHost),
 		Example: "cmdr get bitnami-container",
 		Run: func(cmd *cobra.Command, args []string) {
 
@@ -120,8 +77,8 @@ func main() {
 			}
 		},
 	}
-	chartsCmd.Flags().BoolP("all", "a", false, fmt.Sprintf("download all chart available online from %s", chartRepoHost))
-	chartsCmd.Flags().String("host", chartRepoHost, "update chart from defined host")
+	chartsCmd.Flags().BoolP("all", "a", false, fmt.Sprintf("download all chart available online from %s", cmdr.ChartRepoHost))
+	chartsCmd.Flags().String("host", cmdr.ChartRepoHost, "update chart from defined host")
 
 	rootCmd.AddCommand(chartsCmd)
 
@@ -136,7 +93,7 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
-				_, err = f.WriteString(chartTemplate)
+				_, err = f.WriteString(cmdr.ChartTemplate)
 				if err != nil {
 					panic(err)
 				}

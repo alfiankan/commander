@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Hugo 0.104.3" />
+<link rel="apple-touch-icon" sizes="180x180" href='https://alfiankan.github.io/commander-charts/favicons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='https://alfiankan.github.io/commander-charts/favicons/favicon-32x32.png'>
+<link rel="icon" type="image/png" sizes="16x16" href='https://alfiankan.github.io/commander-charts/favicons/favicon-16x16.png'>
+<link rel="manifest" href='https://alfiankan.github.io/commander-charts/favicons/site.webmanifest'>
+<link rel="mask-icon" href='https://alfiankan.github.io/commander-charts/favicons/safari-pinned-tab.svg'  color="#004750">
+<link rel="shortcut icon" href='https://alfiankan.github.io/commander-charts/favicons/favicon.ico'>
+<meta name="msapplication-config" content='https://alfiankan.github.io/commander-charts/favicons/browserconfig.xml'>
+<title>(Hu)go Template Primer | Commander TUI</title><meta property="og:title" content="(Hu)go Template Primer" />
+<meta property="og:description" content="Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://alfiankan.github.io/commander-charts/blog/goisforlovers/" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2014-04-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2014-04-02T00:00:00+00:00" />
+
+<meta itemprop="name" content="(Hu)go Template Primer">
+<meta itemprop="description" content="Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates."><meta itemprop="datePublished" content="2014-04-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2014-04-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1518">
+<meta itemprop="keywords" content="go,golang,templates,themes,development," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="(Hu)go Template Primer"/>
+<meta name="twitter:description" content="Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates."/>
+
+
+<link rel="stylesheet" href="https://alfiankan.github.io/commander-charts/css/styles.38bc967030acc6da76d37459561c6cbf2eeba07e97b696c0b42ced4c0a847050e791337ddf8bad87ed4875ee30d8adc996e3deeb6902569bef65dd1f32baedce.css" integrity="sha512-OLyWcDCsxtp203RZVhxsvy7roH6XtpbAtCztTAqEcFDnkTN934uth&#43;1Ide4w2K3JluPe62kCVpvvZd0fMrrtzg==">
+
+
+
+
+  <meta name="description" content="Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates.">
+
+
+</head>
+<body class="page-page" id="pagetop">
+  <header class="nav_header">
+<nav class="wrap nav menu">
+	<a href="https://alfiankan.github.io/commander-charts/" class="nav_brand">
+		<picture data-lit="https://alfiankan.github.io/commander-charts/images/compose.svg" data-dark="https://alfiankan.github.io/commander-charts/images/compose-light.svg">
+			
+			<source srcset = 'https://alfiankan.github.io/commander-charts/images/compose-light.svg' media="(prefers-color-scheme: dark)">
+			
+			<img srcset = 'https://alfiankan.github.io/commander-charts/images/compose.svg' alt = 'Commander TUI Logo'>
+		</picture>
+		<label class="nav_toggle toggle" title='Site Menu' role="button">
+			<svg class="icon icon_harmburger">
+  <use xlink:href="#harmburger"></use>
+</svg>
+		</label>
+	</a>
+	<ul class="nav_body">
+		<li class="nav-item">
+<div class="search">
+  <label for="find" class="search_label"><svg class="icon icon_search">
+  <use xlink:href="#search"></use>
+</svg>
+  </label>
+  
+  
+  
+  <input type="search" class="search_field" placeholder='Search blog' id="find" autocomplete="off"  data-scope='blog'>
+  <div class="search_results results"></div>
+</div>
+
+
+
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="https://alfiankan.github.io/commander-charts/docs/"><span>Docs</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="https://alfiankan.github.io/commander-charts/tutorials/"><span>Tutorials</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="https://docs.neuralvibes.com"><span>Example</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="https://alfiankan.github.io/commander-charts/blog/"><span>Blog</span></a>
+		</li>
+		
+		<li class="nav-item nav_repo">
+			<a class="nav-link" href="https://github.com/onweru/compose/" target="_blank">
+				
+					<picture data-lit="https://alfiankan.github.io/commander-charts/images/GitHubMarkLight.svg" data-dark="https://alfiankan.github.io/commander-charts/images/GitHubMarkDark.svg">
+						
+							<source srcset = 'https://alfiankan.github.io/commander-charts/images/GitHubMarkDark.svg' media="(prefers-color-scheme: dark)">
+						
+						<img srcset = 'https://alfiankan.github.io/commander-charts/images/GitHubMarkLight.svg' alt = 'GitHub Repo'>
+					</picture>
+				
+			</a>
+		</li>
+		<li class="nav-item"><div class = 'color_mode'>
+  <label for = 'mode'></label>
+  <input type = 'checkbox' class = 'color_choice' id = 'mode' title="Toggle Dark Mode">
+</div>
+</li>
+	</ul>
+</nav>
+
+  </header>
+  
+  <div class="wrap mt post">
+    <div><p class="post_date">02. April 2014</p>
+      <h1 class="post_title">(Hu)go Template Primer</h1>
+      <div class="post_body">
+        <div class="post_inner">
+        
+          
+          <img src="https://alfiankan.github.io/commander-charts/images/artist.jpg" alt="artist.jpg" class="post_thumbnail">
+        
+          <p>Hugo uses the excellent <a href="https://golang.org/">Go</a> <a href="https://golang.org/pkg/html/template/">html/template</a> library for
+its template engine. It is an extremely lightweight engine that provides a very
+small amount of logic. In our experience that it is just the right amount of
+logic to be able to create a good static website. If you have used other
+template systems from different languages or frameworks you will find a lot of
+similarities in Go templates.</p>
+<p>This document is a brief primer on using Go templates. The <a href="https://golang.org/pkg/html/template/">Go docs</a>
+provide more details.</p>
+<h2 id="introduction-to-go-templates">Introduction to Go Templates</h2>
+<p>Go templates provide an extremely simple template language. It adheres to the
+belief that only the most basic of logic belongs in the template or view layer.
+One consequence of this simplicity is that Go templates parse very quickly.</p>
+<p>A unique characteristic of Go templates is they are content aware. Variables and
+content will be sanitized depending on the context of where they are used. More
+details can be found in the <a href="https://golang.org/pkg/html/template/">Go docs</a>.</p>
+<h2 id="basic-syntax">Basic Syntax</h2>
+<p>Golang templates are HTML files with the addition of variables and
+functions.</p>
+<p><strong>Go variables and functions are accessible within {{ }}</strong></p>
+<p>Accessing a predefined variable &quot;foo&quot;:</p>
+<pre><code>{{ foo }}
+</code></pre>
+<p><strong>Parameters are separated using spaces</strong></p>
+<p>Calling the add function with input of 1, 2:</p>
+<pre><code>{{ add 1 2 }}
+</code></pre>
+<p><strong>Methods and fields are accessed via dot notation</strong></p>
+<p>Accessing the Page Parameter &quot;bar&quot;</p>
+<pre><code>{{ .Params.bar }}
+</code></pre>
+<p><strong>Parentheses can be used to group items together</strong></p>
+<pre><code>{{ if or (isset .Params &quot;alt&quot;) (isset .Params &quot;caption&quot;) }} Caption {{ end }}
+</code></pre>
+<h2 id="variables">Variables</h2>
+<p>Each Go template has a struct (object) made available to it. In hugo each
+template is passed either a page or a node struct depending on which type of
+page you are rendering. More details are available on the
+<a href="/layout/variables">variables</a> page.</p>
+<p>A variable is accessed by referencing the variable name.</p>
+<pre><code>&lt;title&gt;{{ .Title }}&lt;/title&gt;
+</code></pre>
+<p>Variables can also be defined and referenced.</p>
+<pre><code>{{ $address := &quot;123 Main St.&quot;}}
+{{ $address }}
+</code></pre>
+<h2 id="functions">Functions</h2>
+<p>Go template ship with a few functions which provide basic functionality. The Go
+template system also provides a mechanism for applications to extend the
+available functions with their own. <a href="/layout/functions">Hugo template
+functions</a> provide some additional functionality we believe
+are useful for building websites. Functions are called by using their name
+followed by the required parameters separated by spaces. Template
+functions cannot be added without recompiling hugo.</p>
+<p><strong>Example:</strong></p>
+<pre><code>{{ add 1 2 }}
+</code></pre>
+<h2 id="includes">Includes</h2>
+<p>When including another template you will pass to it the data it will be
+able to access. To pass along the current context please remember to
+include a trailing dot. The templates location will always be starting at
+the /layout/ directory within Hugo.</p>
+<p><strong>Example:</strong></p>
+<pre><code>{{ template &quot;chrome/header.html&quot; . }}
+</code></pre>
+<h2 id="logic">Logic</h2>
+<p>Go templates provide the most basic iteration and conditional logic.</p>
+<h3 id="iteration">Iteration</h3>
+<p>Just like in Go, the Go templates make heavy use of range to iterate over
+a map, array or slice. The following are different examples of how to use
+range.</p>
+<p><strong>Example 1: Using Context</strong></p>
+<pre><code>{{ range array }}
+    {{ . }}
+{{ end }}
+</code></pre>
+<p><strong>Example 2: Declaring value variable name</strong></p>
+<pre><code>{{range $element := array}}
+    {{ $element }}
+{{ end }}
+</code></pre>
+<p><strong>Example 2: Declaring key and value variable name</strong></p>
+<pre><code>{{range $index, $element := array}}
+    {{ $index }}
+    {{ $element }}
+{{ end }}
+</code></pre>
+<h3 id="conditionals">Conditionals</h3>
+<p>If, else, with, or, &amp; and provide the framework for handling conditional
+logic in Go Templates. Like range, each statement is closed with <code>end</code>.</p>
+<p>Go Templates treat the following values as false:</p>
+<ul>
+<li>false</li>
+<li>0</li>
+<li>any array, slice, map, or string of length zero</li>
+</ul>
+<p><strong>Example 1: If</strong></p>
+<pre><code>{{ if isset .Params &quot;title&quot; }}&lt;h4&gt;{{ index .Params &quot;title&quot; }}&lt;/h4&gt;{{ end }}
+</code></pre>
+<p><strong>Example 2: If -&gt; Else</strong></p>
+<pre><code>{{ if isset .Params &quot;alt&quot; }}
+    {{ index .Params &quot;alt&quot; }}
+{{else}}
+    {{ index .Params &quot;caption&quot; }}
+{{ end }}
+</code></pre>
+<p><strong>Example 3: And &amp; Or</strong></p>
+<pre><code>{{ if and (or (isset .Params &quot;title&quot;) (isset .Params &quot;caption&quot;)) (isset .Params &quot;attr&quot;)}}
+</code></pre>
+<p><strong>Example 4: With</strong></p>
+<p>An alternative way of writing &quot;if&quot; and then referencing the same value
+is to use &quot;with&quot; instead. With rebinds the context <code>.</code> within its scope,
+and skips the block if the variable is absent.</p>
+<p>The first example above could be simplified as:</p>
+<pre><code>{{ with .Params.title }}&lt;h4&gt;{{ . }}&lt;/h4&gt;{{ end }}
+</code></pre>
+<p><strong>Example 5: If -&gt; Else If</strong></p>
+<pre><code>{{ if isset .Params &quot;alt&quot; }}
+    {{ index .Params &quot;alt&quot; }}
+{{ else if isset .Params &quot;caption&quot; }}
+    {{ index .Params &quot;caption&quot; }}
+{{ end }}
+</code></pre>
+<h2 id="pipes">Pipes</h2>
+<p>One of the most powerful components of Go templates is the ability to
+stack actions one after another. This is done by using pipes. Borrowed
+from unix pipes, the concept is simple, each pipeline's output becomes the
+input of the following pipe.</p>
+<p>Because of the very simple syntax of Go templates, the pipe is essential
+to being able to chain together function calls. One limitation of the
+pipes is that they only can work with a single value and that value
+becomes the last parameter of the next pipeline.</p>
+<p>A few simple examples should help convey how to use the pipe.</p>
+<p><strong>Example 1 :</strong></p>
+<pre><code>{{ if eq 1 1 }} Same {{ end }}
+</code></pre>
+<p>is the same as</p>
+<pre><code>{{ eq 1 1 | if }} Same {{ end }}
+</code></pre>
+<p>It does look odd to place the if at the end, but it does provide a good
+illustration of how to use the pipes.</p>
+<p><strong>Example 2 :</strong></p>
+<pre><code>{{ index .Params &quot;disqus_url&quot; | html }}
+</code></pre>
+<p>Access the page parameter called &quot;disqus_url&quot; and escape the HTML.</p>
+<p><strong>Example 3 :</strong></p>
+<pre><code>{{ if or (or (isset .Params &quot;title&quot;) (isset .Params &quot;caption&quot;)) (isset .Params &quot;attr&quot;)}}
+Stuff Here
+{{ end }}
+</code></pre>
+<p>Could be rewritten as</p>
+<pre><code>{{  isset .Params &quot;caption&quot; | or isset .Params &quot;title&quot; | or isset .Params &quot;attr&quot; | if }}
+Stuff Here
+{{ end }}
+</code></pre>
+<h2 id="context-aka-the-dot">Context (aka. the dot)</h2>
+<p>The most easily overlooked concept to understand about Go templates is that {{ . }}
+always refers to the current context. In the top level of your template this
+will be the data set made available to it. Inside of a iteration it will have
+the value of the current item. When inside of a loop the context has changed. .
+will no longer refer to the data available to the entire page. If you need to
+access this from within the loop you will likely want to set it to a variable
+instead of depending on the context.</p>
+<p><strong>Example:</strong></p>
+<pre><code>  {{ $title := .Site.Title }}
+  {{ range .Params.tags }}
+    &lt;li&gt; &lt;a href=&quot;{{ $baseurl }}/tags/{{ . | urlize }}&quot;&gt;{{ . }}&lt;/a&gt; - {{ $title }} &lt;/li&gt;
+  {{ end }}
+</code></pre>
+<p>Notice how once we have entered the loop the value of {{ . }} has changed. We
+have defined a variable outside of the loop so we have access to it from within
+the loop.</p>
+<h1 id="hugo-parameters">Hugo Parameters</h1>
+<p>Hugo provides the option of passing values to the template language
+through the site configuration (for sitewide values), or through the meta
+data of each specific piece of content. You can define any values of any
+type (supported by your front matter/config format) and use them however
+you want to inside of your templates.</p>
+<h2 id="using-content-page-parameters">Using Content (page) Parameters</h2>
+<p>In each piece of content you can provide variables to be used by the
+templates. This happens in the <a href="/content/front-matter">front matter</a>.</p>
+<p>An example of this is used in this documentation site. Most of the pages
+benefit from having the table of contents provided. Sometimes the TOC just
+doesn't make a lot of sense. We've defined a variable in our front matter
+of some pages to turn off the TOC from being displayed.</p>
+<p>Here is the example front matter:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="ln">1</span><span class="cl">---
+</span></span><span class="line"><span class="ln">2</span><span class="cl">title: &#34;Permalinks&#34;
+</span></span><span class="line"><span class="ln">3</span><span class="cl">date: &#34;2013-11-18&#34;
+</span></span><span class="line"><span class="ln">4</span><span class="cl">aliases:
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="k">-</span> &#34;/doc/permalinks/&#34;
+</span></span><span class="line"><span class="ln">6</span><span class="cl">groups: [&#34;extras&#34;]
+</span></span><span class="line"><span class="ln">7</span><span class="cl">groups_weight: 30
+</span></span><span class="line"><span class="ln">8</span><span class="cl">notoc: true
+</span></span><span class="line"><span class="ln">9</span><span class="cl">---
+</span></span></code></pre></div><p>Here is the corresponding code inside of the template:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="ln">1</span><span class="cl">    {{ if not .Params.notoc }}
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;toc&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;well col-md-4 col-sm-6&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    {{ .TableOfContents }}
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    {{ end }}
+</span></span></code></pre></div><h2 id="using-site-config-parameters">Using Site (config) Parameters</h2>
+<p>In your top-level configuration file (eg, <code>config.yaml</code>) you can define site
+parameters, which are values which will be available to you in chrome.</p>
+<p>For instance, you might declare:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln">1</span><span class="cl"><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">  </span><span class="nt">CopyrightHTML</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Copyright &amp;#xA9; 2013 John Doe. All Rights Reserved.&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">  </span><span class="nt">TwitterUser</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;spf13&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">  </span><span class="nt">SidebarRecentLimit</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span></code></pre></div><p>Within a footer layout, you might then declare a <code>&lt;footer&gt;</code> which is only
+provided if the <code>CopyrightHTML</code> parameter is provided, and if it is given,
+you would declare it to be HTML-safe, so that the HTML entity is not escaped
+again.  This would let you easily update just your top-level config file each
+January 1st, instead of hunting through your templates.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="ln">1</span><span class="cl">    {{if .Site.Params.CopyrightHTML}}
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="p">&lt;</span><span class="nt">footer</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;text-center&#34;</span><span class="p">&gt;</span>{{.Site.Params.CopyrightHTML | safeHtml}}<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    {{end}}
+</span></span></code></pre></div><p>An alternative way of writing the &quot;if&quot; and then referencing the same value
+is to use &quot;with&quot; instead. With rebinds the context <code>.</code> within its scope,
+and skips the block if the variable is absent:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="ln">1</span><span class="cl">    {{with .Site.Params.TwitterUser}}
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;twitter&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://twitter.com/{{.}}&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;author&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;/images/twitter.png&#34;</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;48&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;48&#34;</span> <span class="na">title</span><span class="o">=</span><span class="s">&#34;Twitter: {{.}}&#34;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">     <span class="na">alt</span><span class="o">=</span><span class="s">&#34;Twitter&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    {{end}}
+</span></span></code></pre></div><p>Finally, if you want to pull &quot;magic constants&quot; out of your layouts, you can do
+so, such as in this example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="ln">1</span><span class="cl">    <span class="p">&lt;</span><span class="nt">nav</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;recent&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">      <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Recent Posts<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">      <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>{{range first .Site.Params.SidebarRecentLimit .Site.Recent}}
+</span></span><span class="line"><span class="ln">4</span><span class="cl">        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;{{.RelPermalink}}&#34;</span><span class="p">&gt;</span>{{.Title}}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">      {{end}}<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">&lt;/</span><span class="nt">nav</span><span class="p">&gt;</span>
+</span></span></code></pre></div>
+        </div>
+        <div class="post_extra mb-2">
+          
+<div class="copy" data-before="" data-after="">
+  <svg class="icon">
+    <use xlink:href="#copy"></use>
+  </svg>
+</div>
+        </div>
+        <div>
+        
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  
+<footer class="pt-2 pb-2">
+  <div class="wrap">
+    <p>&copy; <span class="year">2022</span> <a href ="https://neuralvibes.com/author/" target="_blank" rel="noopener">Weru</a></p>
+    <a href="#pagetop" id="toTop" title=Back&#32;to&#32;top></a>
+  </div>
+</footer>
+
+
+<svg width="0" height="0" class="hidden">
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492.004 492.004" id="next">
+    <path d="M484.14 226.886L306.46 49.202c-5.072-5.072-11.832-7.856-19.04-7.856-7.216 0-13.972 2.788-19.044 7.856l-16.132 16.136c-5.068 5.064-7.86 11.828-7.86 19.04 0 7.208 2.792 14.2 7.86 19.264L355.9 207.526H26.58C11.732 207.526 0 219.15 0 234.002v22.812c0 14.852 11.732 27.648 26.58 27.648h330.496L252.248 388.926c-5.068 5.072-7.86 11.652-7.86 18.864 0 7.204 2.792 13.88 7.86 18.948l16.132 16.084c5.072 5.072 11.828 7.836 19.044 7.836 7.208 0 13.968-2.8 19.04-7.872l177.68-177.68c5.084-5.088 7.88-11.88 7.86-19.1.016-7.244-2.776-14.04-7.864-19.12z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511.999 511.999" id="search">
+    <path d="M508.874 478.708L360.142 329.976c28.21-34.827 45.191-79.103 45.191-127.309C405.333 90.917 314.416 0 202.666 0S0 90.917 0 202.667s90.917 202.667 202.667 202.667c48.206 0 92.482-16.982 127.309-45.191l148.732 148.732c4.167 4.165 10.919 4.165 15.086 0l15.081-15.082c4.165-4.166 4.165-10.92-.001-15.085zM202.667 362.667c-88.229 0-160-71.771-160-160s71.771-160 160-160 160 71.771 160 160-71.771 160-160 160z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 241 179" id="harmburger">
+    <path d="M1 10C1 4.477 5.477 0 11 0h220c5.523 0 10 4.477 10 10s-4.477 10-10 10H11C5.477 20 1 15.523 1 10zm0 80c0-5.523 4.477-10 10-10h220c5.523 0 10 4.477 10 10s-4.477 10-10 10H11c-5.523 0-10-4.477-10-10zm9 69c-5.523 0-10 4.477-10 10s4.477 10 10 10h220c5.523 0 10-4.477 10-10s-4.477-10-10-10H10z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.998 401.998" id="sort">
+    <path d="M73.092 164.452h255.813c4.949 0 9.233-1.807 12.848-5.424 3.613-3.616 5.427-7.898 5.427-12.847s-1.813-9.229-5.427-12.85L213.846 5.424C210.232 1.812 205.951 0 200.999 0s-9.233 1.812-12.85 5.424L60.242 133.331c-3.617 3.617-5.424 7.901-5.424 12.85 0 4.948 1.807 9.231 5.424 12.847 3.621 3.617 7.902 5.424 12.85 5.424zm255.813 73.097H73.092c-4.952 0-9.233 1.808-12.85 5.421-3.617 3.617-5.424 7.898-5.424 12.847s1.807 9.233 5.424 12.848L188.149 396.57c3.621 3.617 7.902 5.428 12.85 5.428s9.233-1.811 12.847-5.428l127.907-127.906c3.613-3.614 5.427-7.898 5.427-12.848 0-4.948-1.813-9.229-5.427-12.847-3.614-3.616-7.899-5.42-12.848-5.42z"></path>
+  </symbol>
+</svg>
+
+<svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="youtube">
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
+
+
+<script src="https://alfiankan.github.io/commander-charts/js/bundle.951f71fbb70faeb059ce07076f7623bf956da380b44fd213f8cc28ff4863b45bc1fe1150a59f2f1d2b49771d06d60cbf6c86426236df9c64f94770ea0d7df8ee.js"></script>
+</body>
+</html>

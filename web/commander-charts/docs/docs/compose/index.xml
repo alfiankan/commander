@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Compose Docs on Commander TUI</title>
+    <link>https://alfiankan.github.io/commander-charts/docs/compose/</link>
+    <description>Recent content in Compose Docs on Commander TUI</description>
+    <generator>Hugo -- gohugo.io</generator><atom:link href="https://alfiankan.github.io/commander-charts/docs/compose/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Install theme</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/install-theme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/install-theme/</guid>
+      <description>Prerequisites First ensure that you have hugo installed.
+You need a recent extended version (we recommend version 0.61 or later) of Hugo to do local builds and previews of sites (like this one) that uses this theme.
+If you install from the release page, make sure to get the extended Hugo version, which supports sass; you may need to scroll down the list of releases to see it.
+For comprehensive Hugo documentation, see gohugo.</description>
+    </item>
+    
+    <item>
+      <title>Use forestry CMS</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/use-forestry-cms/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/use-forestry-cms/</guid>
+      <description>Do you prefer managing your site using a CMS? Or would you like to make it easier for someone (a non-techie, perhaps) in your team to make edits easily? If interested, follow along. Else, skip to the next section
+Let&#39;s sync your site with forestry CMS.
+Prerequisites !! Obviously you ought to have a github account. This is where your website source will live. Basically, forestry will read from github and write (commmit) to your github repo.</description>
+    </item>
+    
+    <item>
+      <title>Content organization</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/organize-content/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/organize-content/</guid>
+      <description>This theme is primarily meant for documentation.
+Documentation By default, the theme will look for all your documentation content within the docs directory.
+However, if you would like to have your docs content across multiple directories, please list those directories inside config/_default/params.toml under docSections like so:
+... docSections = [&amp;#34;docs&amp;#34;, &amp;#34;tutorials&amp;#34;] ... Unlike other regular pages, the documentation pages will have a left sidebar. This sidebar will list links to all the pages in the documentation pages.</description>
+    </item>
+    
+    <item>
+      <title>Shortcodes</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/shortcodes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/shortcodes/</guid>
+      <description>Instead of writing all your site pages from scratch, Hugo lets you define and use shortcodes.
+Why shortcodes? While markdown is sufficient to produce simple pages, it&#39;s insufficient where complex page structures are needed. Thusly, whenever we need special styling, shortcodes compliment the shortcomings of markdown.
+This way, you can side step complex html and css boilerplate in your content files.
+Sometimes, the shortcode will wrap content, sometimes it won&#39;t. When content is wrapped, a closing shortcode tag is needed.</description>
+    </item>
+    
+    <item>
+      <title>Search Function</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/search/</guid>
+      <description>Firstly, ensure you have these lines inside your config.toml file
+1[outputs] 2 home = [&amp;#34;HTML&amp;#34;, &amp;#34;RSS&amp;#34;,&amp;#34;JSON&amp;#34;] Compose implements fuse.js to enable search functionality. At the time of this writing, search on these theme takes either of this forms:
+1. Passive search This occurs only when the user loads the search page i.e /search/. They can directly navigate to that url. Alternatively, the user can type you search query on the search field and click enter.</description>
+    </item>
+    
+    <item>
+      <title>Shortcodes Applied</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/shortcodes-example/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/shortcodes-example/</guid>
+      <description>Blocks, columns &amp;amp; buttons 1{{&amp;lt; block &amp;#34;grid-2&amp;#34; &amp;gt;}} 2{{&amp;lt; column &amp;gt;}} 3#### Coumn 1 4 5Lorem ipsum dolor sit amet, 6... 7 8{{&amp;lt; button &amp;#34;https://github.com/onweru/compose&amp;#34; &amp;#34;Download Theme&amp;#34; &amp;gt;}} 9 10{{&amp;lt; /column &amp;gt;}} 11{{&amp;lt; column &amp;gt;}} 12 13&amp;lt;!-- generates 👇 --&amp;gt; Coumn 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</description>
+    </item>
+    
+    <item>
+      <title>Mermaid</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/mermaid/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/mermaid/</guid>
+      <description>Mermaid is library that helps you generate diagrams, flowcharts, and piecharts from text in a similar manner as markdown.
+With compose theme, you can use mermaid using a custom shortcode as follows:
+Sequence Diagrams Syntax
+1{{&amp;lt; mermaid &amp;gt;}} 2sequenceDiagram 3 participant Alice 4 participant Bob 5 Alice-&amp;gt;&amp;gt;John: Hello John, how are you? 6 loop Healthcheck 7 John-&amp;gt;&amp;gt;John: Fight against hypochondria 8 end 9 Note right of John: Rational thoughts&amp;lt;br/&amp;gt;prevail... 10 John--&amp;gt;&amp;gt;Alice: Great!</description>
+    </item>
+    
+    <item>
+      <title>Graphs, charts &amp; dynamic tables</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/graphs-charts-tables/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/graphs-charts-tables/</guid>
+      <description>Using chart js library you can display data you have stored in a csv file as a pie chart, bar graph or doughnut chart.
+At this point if you want to display data from a json or yaml file, you would need to convert it into csv first. Else the template will error out.
+Once you have a csv file, you display the charts as follows:
+Show a pie, doughnut &amp;amp; bar chart at once Firstly define the data you want to display from the front matter:</description>
+    </item>
+    
+    <item>
+      <title>Customize layouts &amp; components</title>
+      <link>https://alfiankan.github.io/commander-charts/docs/compose/customize/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alfiankan.github.io/commander-charts/docs/compose/customize/</guid>
+      <description>Shortcodes modifiers These modifiers are classes you can use with shortcodes to customize the look and feel of your layouts and components.
+Grid modifier space grid-2 2 columns grid-3 3 columns grid-4 4 columns Spacing modifier space mt-1 1.5rem top margin mt-2 3rem top margin mt-3 4.5rem top margin mt-4 6rem top margin use pt-1 ~ pt-4 for top padding
+modifier space mb-1 1.5rem bottom margin mb-2 3rem bottom margin mb-3 4.</description>
+    </item>
+    
+  </channel>
+</rss>
