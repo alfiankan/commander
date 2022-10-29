@@ -1,7 +1,6 @@
 package cmdr
 
 import (
-	"os"
 	"os/exec"
 	"strings"
 
@@ -25,8 +24,7 @@ func (m EditorTuiViewModel) Init() tea.Cmd {
 		if err != nil {
 			panic(err)
 		}
-		os.Exit(0)
-		return CmdrFinished{err}
+		return tea.Quit
 	})
 }
 
@@ -42,7 +40,7 @@ func (m EditorTuiViewModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m EditorTuiViewModel) View() string {
 	var b strings.Builder
-
+	b.WriteString(titleStyle.Render("Press ctrl+c key to quit"))
 	return b.String()
 
 }

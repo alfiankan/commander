@@ -35,7 +35,7 @@ func NewDownloader(chartsName []ChartsRepo, cdnHost string) {
 	if len(chartsName) == 0 {
 		var onlineChartsList []ChartsRepo
 
-		timeout := 1000 * time.Millisecond
+		timeout := 31000 * time.Millisecond
 		client := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
 
 		res, err := client.Get(fmt.Sprintf("%s/repo.chart.json", cdnHost), nil)
@@ -62,12 +62,11 @@ func NewDownloader(chartsName []ChartsRepo, cdnHost string) {
 	p = tea.NewProgram(m)
 
 	go func() {
-		time.Sleep(5 * time.Second)
 
 		for i, v := range m.chartsList {
 			time.Sleep(200 * time.Millisecond)
 
-			timeout := 1000 * time.Millisecond
+			timeout := 31000 * time.Millisecond
 			client := httpclient.NewClient(httpclient.WithHTTPTimeout(timeout))
 
 			res, err := client.Get(fmt.Sprintf("%s/%s.chart.json", cdnHost, v.Name), nil)
