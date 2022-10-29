@@ -3,7 +3,7 @@ package cmdr
 const (
 	GreenTemplate = "\033[1;32m%s\033[0m"
 	RedTemplate   = "\033[1;31m%s\033[0m"
-	ChartRepoHost = "http://localhost:1313/commander-charts/charts"
+	ChartRepoHost = "https://alfiankan.github.io/commander-charts/charts"
 	ChartTemplate = `{
   "kind": "mychart",
   "description": "my personal chart",
