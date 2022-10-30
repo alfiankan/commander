@@ -14,6 +14,11 @@ For full documentation visit [Commander Docs](https://alfiankan.github.io/comman
 curl -sfL https://alfiankan.github.io/commander-charts/install.sh | sh -
 ```
 
+using home brew
+```bash
+brew tap alfiankan/homebrew-tap && brew install commander
+```
+
 ## Build from source
 
 1. Install go 1.18^
