@@ -17,7 +17,7 @@ jobs:
   just-want-to-try-ssh-connectivity:
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ secrets.PRIVATE_KEY }} >> private.pem
+      - run: echo "${{ secrets.PRIVATE_KEY }}" >> private.pem
       - run: ssh -i ./private.pem root@47.254.236.60 docker ps
       
   releases-matrix:
