@@ -25,7 +25,3 @@ func (c *CmdrCodex) Run(prompt string) {
 		println("\033[32m" + c.Text)
 	}
 }
-
-func (c *CmdrCodex) SetToken(authToken string) {
-
-}
