@@ -48,6 +48,23 @@ func main() {
 		},
 	}
 
+	codexCmd := &cobra.Command{
+		Use:     "codex",
+		Short:   "openai codex",
+		Long:    "get ai generated commands and snippets from openai codex",
+		Example: "cmdr codex kubectl create simple job",
+		Run: func(cmd *cobra.Command, args []string) {
+			saveMode, errFlag := cmd.Flags().GetBool("save")
+			if errFlag != nil {
+				panic(errFlag)
+			}
+			fmt.Println(args, saveMode)
+
+		},
+	}
+	codexCmd.Flags().BoolP("save", "s", false, "save generated command")
+	rootCmd.AddCommand(codexCmd)
+
 	chartsCmd := &cobra.Command{
 		Use:     "get",
 		Short:   "get charts online",
