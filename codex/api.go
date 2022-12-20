@@ -41,14 +41,14 @@ type CodexRequest struct {
 }
 
 type OpenApiCodex interface {
-	GetCodexSuggestion(ctx context.Context, authToken string, prompt string) (suggestion CodexSuggestion, err error)
+	GetCodexSuggestion(ctx context.Context, prompt string) (suggestion CodexSuggestion, err error)
 }
 
 type CodexApi struct {
 	apiKey string
 }
 
-func NewCodexApi(apiKey string) *CodexApi {
+func NewCodexApi(apiKey string) OpenApiCodex {
 	return &CodexApi{
 		apiKey: apiKey,
 	}
@@ -69,7 +69,6 @@ func (c *CodexApi) GetCodexSuggestion(ctx context.Context, prompt string) (sugge
 	}
 
 	payloadByte, err := json.Marshal(payloadBody)
-	fmt.Println(string(payloadByte))
 	if err != nil {
 		panic(err)
 	}

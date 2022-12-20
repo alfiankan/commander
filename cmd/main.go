@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/alfiankan/commander/charts"
 	"github.com/alfiankan/commander/cmdr"
+	"github.com/alfiankan/commander/codex"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )
@@ -54,15 +56,11 @@ func main() {
 		Long:    "get ai generated commands and snippets from openai codex",
 		Example: "cmdr codex kubectl create simple job",
 		Run: func(cmd *cobra.Command, args []string) {
-			saveMode, errFlag := cmd.Flags().GetBool("save")
-			if errFlag != nil {
-				panic(errFlag)
-			}
-			fmt.Println(args, saveMode)
+
+			codex.StartCommanderCodex(strings.Join(args, " "))
 
 		},
 	}
-	codexCmd.Flags().BoolP("save", "s", false, "save generated command")
 	rootCmd.AddCommand(codexCmd)
 
 	chartsCmd := &cobra.Command{

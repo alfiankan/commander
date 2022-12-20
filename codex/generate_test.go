@@ -11,7 +11,7 @@ import (
 
 func TestGenerateCommand(t *testing.T) {
 
-	api := NewCodexApi(os.Getenv("OPENAI_API_KEY"))
+	api := NewCodexApiMock(os.Getenv("OPENAI_API_KEY"))
 	ctx := context.Background()
 
 	result, err := api.GetCodexSuggestion(ctx, "cli command create kubernetes job")
